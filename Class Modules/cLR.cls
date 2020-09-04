@@ -14,6 +14,7 @@ Private pNOC As String
 Private pEvidenceFileName As String
 
 Private pVarNOC As Boolean
+Private pVarNOCType As String
 Private pHpNOC As Integer
 Private pHdNOC As Integer
 
@@ -197,20 +198,23 @@ Sub HarvestLR()
     'Handle VarNOC
     If VarNOC Then
         'Detect type of VarNOC
-        Dim TypeVarNOC As String: TypeVarNOC = rootConfig.selectSingleNode("//varNocPriorsMethod").Text
+        Me.VarNOCType = rootConfig.selectSingleNode("//varNocPriorsMethod").Text
         
-        Select Case TypeVarNOC
+        Select Case Me.VarNOCType
         
             Case "MLE"
                 Me.HpNOC = CInt(rootResults.selectSingleNode("//numberOfContributorsUnderHp").Text)
                 Me.HdNOC = CInt(rootResults.selectSingleNode("//numberOfContributorsUnderHd").Text)
                 Me.NOC = IIf(Me.HpNOC = Me.HdNOC, Me.HpNOC, Me.HpNOC & "/" & Me.HdNOC)
                    
-            Case "Stratified"
+            Case "Stratify"
                 'Stratified doesn't "pick" a particular NOC at the end
                 Dim vListNOCs As IXMLDOMNodeList
                 Set vListNOCs = rootResults.SelectNodes("//contributorStratifiedLr/contributorStratifiedLr")
-                Me.NOC = vListNOCs.Item(0).Attributes(0).Text & "/" & vListNOCs.Item(1).Attributes(0).Text
+                'Since there's no specific HpNOC or HdNOC, we'll use these variables to store the min/max NOCs
+                Me.HpNOC = vListNOCs.Item(0).Attributes(0).Text
+                Me.HdNOC = vListNOCs.Item(1).Attributes(0).Text
+                Me.NOC = Me.HpNOC & "/" & Me.HdNOC
                 
             Case "User Selected"
                 Me.HpNOC = CInt(rootResults.selectSingleNode("//numberOfContributorsUnderHp").Text)
@@ -518,17 +522,20 @@ Sub DumpLR(LRSheet As Worksheet, rngCorner As Range)
             i = i + 1
         Next v
         
-        'Stratified
+        'Stratified LR
         LRcorner.Offset(5, 2).Value = Me.StratifiedTotal
         LRcorner.Offset(6, 2).Value = Me.StratifiedUnified
         
         
     'Propositions (H1/H2)
-        If Me.VarNOC And Me.HdNOC <> Me.HpNOC Then
+        If Me.VarNOC And Me.VarNOCType <> "Stratify" And Me.HdNOC <> Me.HpNOC Then
             Call Me.WeirdVarNOC(rngCorner) 'If H1 & H2 have different NOC!
         Else:
             Call Me.ContributorSection(rngCorner)
         End If
+        
+        Application.Calculation = xlCalculationAutomatic
+        Application.Calculate
 
 End Sub
 
@@ -604,6 +611,26 @@ Sub ContributorSection(rng As Range)
                 Target.Offset(1, col).Value = "U"
             Next col
             
+            For col = 1 To HpKnowns.Count
+                Target.Offset(0, col).Value = HpKnowns.Keys()(col - 1)
+            Next col
+            
+            For col = 1 To HdKnowns.Count
+                Target.Offset(1, col).Value = HdKnowns.Keys()(col - 1)
+            Next col
+            
+            
+        Case Else 'this covers stratified VarNOCs that didn't pick a NOC
+            For col = 1 To Me.HdNOC 'HpNOC is the "maximum" NOC here
+                Target.Offset(0, col).Value = "(U)"
+                Target.Offset(1, col).Value = "(U)"
+            Next col
+            
+            For col = 1 To Me.HpNOC 'HpNOC is the "minimum" NOC here
+                Target.Offset(0, col).Value = "U"
+                Target.Offset(1, col).Value = "U"
+            Next col
+        
             For col = 1 To HpKnowns.Count
                 Target.Offset(0, col).Value = HpKnowns.Keys()(col - 1)
             Next col
@@ -751,6 +778,13 @@ Public Property Get VarNOC() As Boolean
 End Property
 Public Property Let VarNOC(v As Boolean)
     pVarNOC = v
+End Property
+
+Public Property Get VarNOCType() As String
+    VarNOCType = pVarNOCType
+End Property
+Public Property Let VarNOCType(v As String)
+    pVarNOCType = v
 End Property
 
 Public Property Get HpNOC() As Integer
