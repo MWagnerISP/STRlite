@@ -254,6 +254,50 @@ Sub ClearLR(rngCorner As Range)
 
 End Sub
 
+Public Function H1LR(rangeLR As Range)
+
+    Select Case rangeLR.Value
+    
+        Case ""
+            H1LR = ""
+        
+        Case Is = 0
+            H1LR = rangeLR.Value
+            
+        Case Is > 1
+            Dim sigfigs As Integer
+            sigfigs = 3 - (1 + Fix(WorksheetFunction.log10(rangeLR.Value))) 'Fix returns only the integer portion (rounds down/truncates to integer)
+            
+            H1LR = Application.WorksheetFunction.RoundDown(rangeLR.Value, sigfigs)
+            
+        Case Else
+            H1LR = ""
+            
+    End Select
+
+End Function
+
+Public Function H2LR(rangeLR As Range)
+
+    Select Case rangeLR.Value
+    
+        Case ""
+            H2LR = ""
+                                                                        
+        Case Is = 0
+            H2LR = ""
+                                                                        
+        Case Is < 1
+            'Excel naturally rounds this up in the cells so we don't have to do anything special
+            H2LR = (1 / rangeLR.Value)
+        
+        Case Else
+            H2LR = ""
+        
+    End Select
+
+End Function
+
 
 Public Function LRSummary(rangeLR As Range) As String
 
