@@ -288,6 +288,7 @@ Public Function H2LR(rangeLR As Range)
             H2LR = ""
                                                                         
         Case Is < 1
+            'Excel naturally rounds this up in the cells so we don't have to do anything special
             H2LR = (1 / rangeLR.Value)
         
         Case Else
