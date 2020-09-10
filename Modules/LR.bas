@@ -265,10 +265,10 @@ Public Function H1LR(rangeLR As Range)
             H1LR = rangeLR.Value
             
         Case Is > 1
-            Dim decimalplaces As Integer
-            decimalplaces = 3 - CInt(WorksheetFunction.Log10(Abs(rangeLR.Value)))
+            Dim sigfigs As Integer
+            sigfigs = 3 - (1 + Fix(WorksheetFunction.log10(rangeLR.Value))) 'Fix returns only the integer portion (rounds down/truncates to integer)
             
-            H1LR = Application.WorksheetFunction.RoundDown(rangeLR.Value, decimalplaces)
+            H1LR = Application.WorksheetFunction.RoundDown(rangeLR.Value, sigfigs)
             
         Case Else
             H1LR = ""
