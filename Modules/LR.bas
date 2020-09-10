@@ -283,7 +283,10 @@ Public Function H2LR(rangeLR As Range)
     
         Case ""
             H2LR = ""
-    
+                                                                        
+        Case Is = 0
+            H2LR = ""
+                                                                        
         Case Is < 1
             H2LR = (1 / rangeLR.Value)
         
