@@ -254,6 +254,46 @@ Sub ClearLR(rngCorner As Range)
 
 End Sub
 
+Public Function H1LR(rangeLR As Range)
+
+    Select Case rangeLR.Value
+    
+        Case ""
+            H1LR = ""
+        
+        Case Is = 0
+            H1LR = rangeLR.Value
+            
+        Case Is > 1
+            Dim decimalplaces As Integer
+            decimalplaces = 3 - CInt(WorksheetFunction.Log10(Abs(rangeLR.Value)))
+            
+            H1LR = Application.WorksheetFunction.RoundDown(rangeLR.Value, decimalplaces)
+            
+        Case Else
+            H1LR = ""
+            
+    End Select
+
+End Function
+
+Public Function H2LR(rangeLR As Range)
+
+    Select Case rangeLR.Value
+    
+        Case ""
+            H2LR = ""
+    
+        Case Is < 1
+            H2LR = (1 / rangeLR.Value)
+        
+        Case Else
+            H2LR = ""
+        
+    End Select
+
+End Function
+
 
 Public Function LRSummary(rangeLR As Range) As String
 
