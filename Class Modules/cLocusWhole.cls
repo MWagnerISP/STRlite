@@ -59,7 +59,7 @@ Public Sub InitializeMe(LocusRange As Range, Standard As Boolean)
                 Me.AlleleString = IIf(CInt(Alleles.Items(0)) < StdStochastic, "[" & Alleles.Keys(0) & "]", Alleles.Keys(0))
 
             Case 2
-                If Alleles.Items(0) < StdStochastic And Alleles.Items(0) < StdStochastic Then
+                If Alleles.Items(0) < StdStochastic And Alleles.Items(1) < StdStochastic Then
                     Me.AlleleString = "[" & Alleles.Keys(0) & ", " & Alleles.Keys(1) & "]"
                 Else:
                     If Alleles.Items(0) < StdStochastic Then Alleles.Keys(0) = "[" & Alleles.Keys(0) & "]"
