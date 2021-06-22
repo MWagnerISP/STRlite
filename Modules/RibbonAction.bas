@@ -129,7 +129,9 @@ End Sub
 Sub ribHelp(control As IRibbonControl)
     MsgBox "1) Remember to select folders, not files, when importing decons & LRs." & vbNewLine & vbNewLine & _
             "2) The case number fills on the combo sheets when you import a decon." & vbNewLine & vbNewLine & _
-            "3) Don't use weird characters in your sample names. The following are ok: _ - + ( ) , . #", vbOKOnly + vbInformation, "Before you call Melanie..."
+            "3) Don't use weird characters in your sample names. The following are ok: _ - + ( ) , . #" & vbNewLine & vbNewLine & _
+            "4) STRlite cares about file locations. It can get confused by files in the cloud." & vbNewLine & vbNewLine & _
+            "5) Make sure your STRlite Settings match what STRmix is outputting, especially stutter types.", vbOKOnly + vbInformation, "Before you call Melanie..."
 End Sub
 
 
